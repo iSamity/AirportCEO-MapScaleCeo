@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <AssemblyName>MapScaleCeo</AssemblyName>
-    <Product>My first plugin</Product>
+    <Product>MapScaleCeo</Product>
     <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
