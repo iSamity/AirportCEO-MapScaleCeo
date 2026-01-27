@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net46</TargetFramework>
+    <AssemblyName>MapScaleCeo</AssemblyName>
+    <Product>My first plugin</Product>
+    <Version>1.0.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <RestoreAdditionalProjectSources>
+      https://api.nuget.org/v3/index.json;
+      https://nuget.bepinex.dev/v3/index.json;
+      https://nuget.samboy.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
+    <RootNamespace>MapScaleCeo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Core" Version="5.*" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+    <PackageReference Include="UnityEngine.Modules" Version="2019.4.40 " IncludeAssets="compile" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MapScaleCeo">
+      <HintPath>Libs\AirportCEOModLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+        <HintPath>Libs\Assembly-CSharp-publicized.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\BepInEx\plugins" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).pdb" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\BepInEx\plugins" />
+  
+      <!-- Only copy to the user-specific path if the configuration is Release -->
+  <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(USERPROFILE)\AppData\Roaming\Apoapsis Studios\Airport CEO\Mods\MapScaleCeo\plugins"
+      Condition="'$(Configuration)' == 'Release'" />
+  <Copy SourceFiles="$(TargetDir)\$(TargetName).pdb" DestinationFolder="$(USERPROFILE)\AppData\Roaming\Apoapsis Studios\Airport CEO\Mods\MapScaleCeo\plugins"
+      Condition="'$(Configuration)' == 'Release'" />
+  </Target>
+</Project>
