@@ -7,22 +7,26 @@ using MapScaleCeo.MapSize;
 
 namespace MapScaleCeo;
 
-    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-    public class Plugin : BaseUnityPlugin
-    {
-        internal static new ManualLogSource Logger;
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+public class Plugin : BaseUnityPlugin
+{
+    internal static new ManualLogSource Logger;
     internal static ConfigFile ConfigReference { get; private set; }
 
-        private void Awake()
-        {
-            // Plugin startup logic
-            Logger = base.Logger;
+    private void Awake()
+    {
+        // Plugin startup logic
+        Logger = base.Logger;
         ConfigReference = base.Config;
+
+        DefaultConfig.Setup();
+
+        MapSizeService.Initialize();
 
         SetupHarmony();
 
-            Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
-        }
+        Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
+    }
 
     private void Start()
     {
