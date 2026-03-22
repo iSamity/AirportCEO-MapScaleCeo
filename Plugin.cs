@@ -21,6 +21,7 @@ public class Plugin : BaseUnityPlugin
 
         DefaultConfig.Setup();
 
+        // TODO: Fix doesn't reset when the game is save, menu and create new airport
         MapSizeService.Initialize();
 
         SetupHarmony();

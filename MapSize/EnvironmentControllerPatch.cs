@@ -103,6 +103,7 @@ internal class EnvironmentControllerPatch
             var sizeY = maxY - minY;
             area.position = new Vector3(centerX, centerY, area.position.z);
             // Black overlay lives on child "Background" with Simple draw mode — size is driven by localScale, not SpriteRenderer.size on the zone root.
+            // So this scales the background so it matches the 1/4 / 1/6 of the map size
             var background = area.Find("Background");
             if (background != null)
                 background.localScale = new Vector3(sizeX, sizeY, 1f);
