@@ -115,8 +115,7 @@ internal class EnvironmentControllerPatch
             SetArea("TopLeft", 0f, num - 1f, wx - num2, wy);
             SetArea("Center", num2 - 1f, 0f, wx, wy - num);
             SetArea("Top", num2 - 1f, num - 1f, wx, wy);
-            SetArea("TopRight", num2 - 1f, num - 1f, wx, wy);
-            SetArea("Right", num2 - 1f, 0f, wx, wy - num);
+            // Not setting topright and right because they are not used when map size is normal 
         }
         else
         {
