@@ -64,7 +64,7 @@ internal class MapSizeWarningPatch
             return false;
 
         var mapSize = entry.Value;
-        if (mapSize.x == 0 || mapSize.y == 0)
+        if (mapSize.x <= 0f || mapSize.y <= 0f)
             return false;
 
         return DialogPanel.Instance != null;
@@ -98,9 +98,9 @@ internal class MapSizeWarningPatch
         var mapSize = mapEntry != null ? mapEntry.Value : default;
         Plugin.Logger.LogInfo($"[MapSizeWarningPatch] NewGameMapSize from config: ({mapSize.x}, {mapSize.y})");
 
-        if (mapSize.x == 0 || mapSize.y == 0)
+        if (mapSize.x <= 0f || mapSize.y <= 0f)
         {
-            Plugin.Logger.LogInfo("[MapSizeWarningPatch] NewGameMapSize is zero, proceeding normally");
+            Plugin.Logger.LogInfo("[MapSizeWarningPatch] NewGameMapSize not positive on both axes, proceeding with vanilla footprint");
             return true;
         }
 

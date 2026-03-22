@@ -1,4 +1,5 @@
 using BepInEx.Configuration;
+using MapScaleCeo;
 using UnityEngine;
 
 namespace MapScaleCeo.Config;
@@ -13,7 +14,28 @@ static class DefaultConfig
             "General",
             "Map Size (New Game)",
             new Vector2(),
-            "Width and height for the next NEW airport only (0,0 = vanilla size for Normal/Large). Loaded saves always use the save file; terrain follows the live grid.");
+            "Width and height for the next NEW airport only (0,0 = vanilla size for Normal/Large). Negative values are clamped to 0. Loaded saves always use the save file; terrain follows the live grid.");
+
+        ClampNewGameMapSizeIfNegative();
+        NewGameMapSize.SettingChanged += (_, __) => ClampNewGameMapSizeIfNegative();
+    }
+
+    /// <summary>
+    /// Config files or the runtime config UI can supply negative components; treat them as 0 so behavior matches
+    /// <see cref="MapScaleCeo.MapSize.MapSizeHelper.GetEffectiveNewGameFootprintXY"/>.
+    /// </summary>
+    static void ClampNewGameMapSizeIfNegative()
+    {
+        if (NewGameMapSize == null)
+            return;
+
+        var v = NewGameMapSize.Value;
+        if (v.x >= 0f && v.y >= 0f)
+            return;
+
+        NewGameMapSize.Value = new Vector2(Mathf.Max(0f, v.x), Mathf.Max(0f, v.y));
+        Plugin.Logger.LogWarning(
+            $"[DefaultConfig] Map Size (New Game) had negative component(s); clamped to ({NewGameMapSize.Value.x}, {NewGameMapSize.Value.y}).");
     }
 
     static ConfigFile ConfigReference => Plugin.ConfigReference;
