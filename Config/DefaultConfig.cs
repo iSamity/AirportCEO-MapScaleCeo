@@ -1,17 +1,19 @@
-﻿using BepInEx.Configuration;
+using BepInEx.Configuration;
 using UnityEngine;
-using MapScaleCeo.MapSize;
 
 namespace MapScaleCeo.Config;
 
 static class DefaultConfig
 {
-    internal static ConfigEntry<Vector2> MapSize { get; private set; }
+    internal static ConfigEntry<Vector2> NewGameMapSize { get; private set; }
 
     public static void Setup()
     {
-        // TODO if i reset the map size, save it and open it next time it will used the set size however the unlockable areas will not be scaled to the new size
-        MapSize = ConfigReference.Bind("General", "Map Size", new Vector2(), "The size of the map if empty it will use the default size, press reset to use the default size");
+        NewGameMapSize = ConfigReference.Bind(
+            "General",
+            "Map Size (New Game)",
+            new Vector2(),
+            "Width and height for the next NEW airport only (0,0 = vanilla size for Normal/Large). Loaded saves always use the save file; terrain follows the live grid.");
     }
 
     static ConfigFile ConfigReference => Plugin.ConfigReference;

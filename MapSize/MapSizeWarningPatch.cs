@@ -9,6 +9,7 @@ namespace MapScaleCeo.MapSize;
 internal class MapSizeWarningPatch
 {
     private static bool _skipWarningCheck;
+    private static bool _pendingConfigResetAfterGridInit;
     private static readonly List<CanvasState> _canvasesToRestore = new List<CanvasState>();
 
     private struct CanvasState
@@ -25,6 +26,30 @@ internal class MapSizeWarningPatch
         _skipWarningCheck = false;
     }
 
+    internal static void SetPendingConfigResetAfterGridInit()
+    {
+        _pendingConfigResetAfterGridInit = true;
+    }
+
+    /// <summary>
+    /// If a reset was requested, clear the flag and return true (caller persists config). Otherwise false.
+    /// </summary>
+    internal static bool ConsumePendingConfigResetAfterGridInit()
+    {
+        if (!_pendingConfigResetAfterGridInit)
+            return false;
+        _pendingConfigResetAfterGridInit = false;
+        return true;
+    }
+
+    /// <summary>
+    /// Drop a pending reset without saving (e.g. first grid init was a load, not the new game that showed the dialog).
+    /// </summary>
+    internal static void AbandonPendingConfigResetAfterGridInit()
+    {
+        _pendingConfigResetAfterGridInit = false;
+    }
+
     /// <summary>
     /// When true, skip <see cref="CustomCameraScreenshot.CaptureTexture"/> so the screenshot runs only after
     /// the user confirms the custom map-size dialog (same gating as showing that dialog, minus NewGame-only checks).
@@ -34,7 +59,11 @@ internal class MapSizeWarningPatch
         if (_skipWarningCheck)
             return false;
 
-        var mapSize = DefaultConfig.MapSize.Value;
+        var entry = DefaultConfig.NewGameMapSize;
+        if (entry == null)
+            return false;
+
+        var mapSize = entry.Value;
         if (mapSize.x == 0 || mapSize.y == 0)
             return false;
 
@@ -65,13 +94,13 @@ internal class MapSizeWarningPatch
             return true;
         }
 
-        var mapSize = DefaultConfig.MapSize.Value;
-        Plugin.Logger.LogInfo($"[MapSizeWarningPatch] MapSize from config: ({mapSize.x}, {mapSize.y})");
+        var mapEntry = DefaultConfig.NewGameMapSize;
+        var mapSize = mapEntry != null ? mapEntry.Value : default;
+        Plugin.Logger.LogInfo($"[MapSizeWarningPatch] NewGameMapSize from config: ({mapSize.x}, {mapSize.y})");
 
-        // No custom size set, proceed normally
         if (mapSize.x == 0 || mapSize.y == 0)
         {
-            Plugin.Logger.LogInfo("[MapSizeWarningPatch] MapSize is zero, proceeding normally");
+            Plugin.Logger.LogInfo("[MapSizeWarningPatch] NewGameMapSize is zero, proceeding normally");
             return true;
         }
 
@@ -90,7 +119,7 @@ internal class MapSizeWarningPatch
         // Show warning dialog for custom map size
         DialogPanel.Instance.ShowQuestionPanel(
             (result) => OnWarningResult(result, __instance, gameLoadSetting, path, isMod),
-            $"Custom Map Size\n\nYou have set a custom map size of {mapSize.x} x {mapSize.y}.\n\nDo you want to continue?",
+            $"Custom map size (new airport)\n\nThe next new airport will use {mapSize.x} x {mapSize.y}.\n\nContinue?",
             true
         );
 
@@ -181,8 +210,8 @@ internal class MapSizeWarningPatch
         if (continueAnyway)
         {
             _skipWarningCheck = true;
+            SetPendingConfigResetAfterGridInit();
 
-            // Below two functions are the same as in the game when pressing continue
             Singleton<CustomCameraScreenshot>.Instance?.CaptureTexture();
             instance.LaunchAirport(gameLoadSetting, path, isMod);
         }

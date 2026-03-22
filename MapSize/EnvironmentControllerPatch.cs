@@ -1,6 +1,5 @@
 using System.Reflection;
 using HarmonyLib;
-using MapScaleCeo.Config;
 using UnityEngine;
 
 namespace MapScaleCeo.MapSize;
@@ -30,16 +29,14 @@ internal class EnvironmentControllerPatch
     /// </summary>
     private static void ApplyTerrainSize(EnvironmentController instance)
     {
-        var mapSize = DefaultConfig.MapSize.Value;
-
-        if (mapSize.x == 0 || mapSize.y == 0)
-        {
+        var wx = GridManager.worldSizeX;
+        var wy = GridManager.worldSizeY;
+        if (wx <= 0 || wy <= 0)
             return;
-        }
 
         // So the world doesn't end exactly at the border of the map
         var extraTerrainSize = 1000f;
-        var terrainSize = new Vector3(mapSize.x + extraTerrainSize, mapSize.y + extraTerrainSize, 1f);
+        var terrainSize = new Vector3(wx + extraTerrainSize, wy + extraTerrainSize, 1f);
         var worldCenter = GridManager.WorldCenter;
         const float zOffset = 0.01f;
 
@@ -60,14 +57,13 @@ internal class EnvironmentControllerPatch
             }
         }
 
-        // Also adjust the environmentOverlay for Temperate climate
         if (instance.environmentOverlay != null)
         {
             instance.environmentOverlay.transform.localScale = terrainSize;
             instance.environmentOverlay.transform.position = worldCenter.SetZ(zOffset);
         }
 
-        Plugin.Logger.LogInfo($"[EnvironmentControllerPatch] Terrain resized to {mapSize.x} x {mapSize.y}");
+        Plugin.Logger.LogInfo($"[EnvironmentControllerPatch] Terrain resized to {wx} x {wy}");
     }
 
     /// <summary>
@@ -76,12 +72,11 @@ internal class EnvironmentControllerPatch
     /// </summary>
     private static void ApplyUnlockableAreasScale(EnvironmentController instance)
     {
-        var mapSize = DefaultConfig.MapSize.Value;
-        if (mapSize.x == 0 || mapSize.y == 0)
-            return;
-
         var wx = (float)GridManager.worldSizeX;
         var wy = (float)GridManager.worldSizeY;
+        if (wx <= 0f || wy <= 0f)
+            return;
+
         var airportData = Singleton<AirportController>.Instance?.AirportData;
         if (airportData == null)
             return;
@@ -130,4 +125,3 @@ internal class EnvironmentControllerPatch
         Plugin.Logger.LogInfo("[EnvironmentControllerPatch] UnlockableAreas scaled to map size");
     }
 }
-

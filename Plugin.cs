@@ -1,9 +1,8 @@
-﻿using AirportCEOModLoader.WatermarkUtils;
+using AirportCEOModLoader.WatermarkUtils;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using MapScaleCeo.Config;
-using MapScaleCeo.MapSize;
 
 namespace MapScaleCeo;
 
@@ -20,9 +19,6 @@ public class Plugin : BaseUnityPlugin
         ConfigReference = base.Config;
 
         DefaultConfig.Setup();
-
-        // TODO: Fix doesn't reset when the game is save, menu and create new airport
-        MapSizeService.Initialize();
 
         SetupHarmony();
 
