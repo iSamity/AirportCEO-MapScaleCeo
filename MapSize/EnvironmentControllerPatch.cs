@@ -106,20 +106,21 @@ internal class EnvironmentControllerPatch
 
         if (airportData.worldSizeType == Enums.WorldSize.Normal)
         {
+            // Partition on num2 / num with no ±1 overlap (adjacent rects share edges only).
             SetArea("Left", 0f, 0f, wx - num2, wy - num);
-            SetArea("TopLeft", 0f, num - 1f, wx - num2, wy);
-            SetArea("Center", num2 - 1f, 0f, wx, wy - num);
-            SetArea("Top", num2 - 1f, num - 1f, wx, wy);
+            SetArea("TopLeft", 0f, num, wx - num2, wy);
+            SetArea("Center", num2, 0f, wx, wy - num);
+            SetArea("Top", num2, num, wx, wy);
             // Not setting topright and right because they are not used when map size is normal 
         }
         else
         {
             SetArea("Center", num2, 0f, wx - num2, wy - num);
-            SetArea("Left", 0f, 0f, wx - num2 * 2f, wy - num + 1f);
+            SetArea("Left", 0f, 0f, wx - num2 * 2f, wy - num);
             SetArea("TopLeft", 0f, num, wx - num2 * 2f, wy);
-            SetArea("Top", num2, num - 1f, wx - num2, wy);
-            SetArea("TopRight", num2 * 2f - 1f, num - 1f, wx, wy);
-            SetArea("Right", num2 * 2f - 1f, 0f, wx, wy - num);
+            SetArea("Top", num2, num, wx - num2, wy);
+            SetArea("TopRight", num2 * 2f, num, wx, wy);
+            SetArea("Right", num2 * 2f, 0f, wx, wy - num);
         }
 
         Plugin.Logger.LogInfo("[EnvironmentControllerPatch] UnlockableAreas scaled to map size");
