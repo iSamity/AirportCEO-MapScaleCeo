@@ -25,20 +25,20 @@ internal class MapSizeWarningPatch
         _skipWarningCheck = false;
     }
 
-    private static void SetCreationPanelContinueButtonEnabled(MainMenuWorldController controller, bool enabled)
+    /// <summary>
+    /// When true, skip <see cref="CustomCameraScreenshot.CaptureTexture"/> so the screenshot runs only after
+    /// the user confirms the custom map-size dialog (same gating as showing that dialog, minus NewGame-only checks).
+    /// </summary>
+    internal static bool ShouldDeferScreenshotForCustomMapWarning()
     {
-        try
-        {
-            var field = AccessTools.Field(typeof(MainMenuWorldController), "airportCreationMenuPanel");
-            if (field?.GetValue(controller) is AirportCreationMenuUI panel)
-            {
-                panel.SetContinueButtonInteractable(enabled);
-            }
-        }
-        catch (System.Exception ex)
-        {
-            Plugin.Logger.LogWarning($"[MapSizeWarningPatch] SetCreationPanelContinueButtonEnabled failed: {ex.Message}");
-        }
+        if (_skipWarningCheck)
+            return false;
+
+        var mapSize = DefaultConfig.MapSize.Value;
+        if (mapSize.x == 0 || mapSize.y == 0)
+            return false;
+
+        return DialogPanel.Instance != null;
     }
 
     [HarmonyPatch(nameof(MainMenuWorldController.LaunchAirport))]
@@ -84,9 +84,6 @@ internal class MapSizeWarningPatch
 
         // Bring dialog to front by increasing canvas sorting order
         BringDialogToFront();
-
-        // Disable Continue/Launch button so user cannot double-click while dialog is open or loading starts
-        SetCreationPanelContinueButtonEnabled(__instance, false);
 
         Plugin.Logger.LogInfo("[MapSizeWarningPatch] Showing warning dialog...");
 
@@ -185,21 +182,12 @@ internal class MapSizeWarningPatch
         {
             _skipWarningCheck = true;
 
-            // AirportCreationMenuUI already ran CaptureTexture() before this prefix blocked LaunchAirport.
-            // LateUpdate sets hasSavedPicture=true; LaunchAirportCoroutine then waits in a while loop with
-            // WaitForSeconds(1f). Without the dialog, the coroutine often starts before that flag is set,
-            // so the wait is skipped. Clear the flag so the deferred launch matches that behavior.
-            var screenshot = Singleton<CustomCameraScreenshot>.Instance;
-            if (screenshot != null)
-            {
-                screenshot.hasSavedPicture = false;
-            }
-
+            // Below two functions are the same as in the game when pressing continue
+            Singleton<CustomCameraScreenshot>.Instance?.CaptureTexture();
             instance.LaunchAirport(gameLoadSetting, path, isMod);
         }
         else
         {
-            SetCreationPanelContinueButtonEnabled(instance, true);
             Plugin.Logger.LogInfo("[MapSizeWarningPatch] User cancelled, not launching");
         }
     }
@@ -229,6 +217,22 @@ internal class MapSizeWarningPatch
         {
             Plugin.Logger.LogWarning($"[MapSizeWarningPatch] Error showing loading feedback: {ex.Message}");
         }
+    }
+}
+
+[HarmonyPatch(typeof(CustomCameraScreenshot), nameof(CustomCameraScreenshot.CaptureTexture))]
+internal static class CustomCameraScreenshotDeferCapturePatch
+{
+    [HarmonyPrefix]
+    internal static bool CaptureTexture_Prefix()
+    {
+        if (MapSizeWarningPatch.ShouldDeferScreenshotForCustomMapWarning())
+        {
+            Plugin.Logger.LogInfo("[MapSizeWarningPatch] Deferring CaptureTexture until dialog Continue");
+            return false;
+        }
+
+        return true;
     }
 }
 
