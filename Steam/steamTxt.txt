@@ -1,0 +1,15 @@
+[h3]Note[/h3]
+This mod requires the [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3109136766]AirportCEO Mod Loader[/url] and [url=https://docs.bepinex.dev/articles/users/installation/index.html]BepInEx[/url]. Install those first, then place this plugin in your BepInEx plugins folder.
+
+[h3]Description[/h3]
+MapScaleCeo (MSC) lets you use **custom map sizes** for new airports and keeps terrain, unlockable zones, and related systems aligned with the **actual** world size. Loading an existing save always uses the **save’s** map dimensions—not the config value, which applies only when **creating a new airport**.
+
+[h3]Features[/h3]
+- Configurable **Map Size (New Game)** for custom width × depth when starting a new airport
+- Warning dialog before launching a new game with a custom size
+- Terrain and unlockable zones scale correctly with custom size
+
+[h3]Version[/h3] read more on [url=https://github.com/iSamity/MapScaleCeo]Github[/url]
+- v1.0.0 - Initial release
+
+[url=https://buymeacoffee.com/isamity][img]https://i.imgur.com/nyZtCjx.png[/img][/url]
