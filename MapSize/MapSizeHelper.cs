@@ -12,6 +12,34 @@ namespace MapScaleCeo.MapSize;
 /// </remarks>
 internal static class MapSizeHelper
 {
+    /// <summary>
+    /// True when the live grid XY is neither stock Normal (700×700) nor stock Large (1050×700) from
+    /// <see cref="GridManager.defaultGrid"/> / <see cref="GridManager.defaultGridLarge"/>. Independent of
+    /// <see cref="AirportData.worldSizeType"/> — e.g. Large layout at 3000×3000 is custom; Normal at 1050×700 is treated as the Large default footprint.
+    /// </summary>
+    internal static bool FootprintIsNonDefaultVanillaSize(string caller = null, bool log = true)
+    {
+        var wx = GridManager.worldSizeX;
+        var wy = GridManager.worldSizeY;
+        if (wx <= 0 || wy <= 0)
+        {
+            if (log)
+                Plugin.Logger.LogInfo(
+                    $"[MSC] FootprintNonDefault ({caller ?? "?"}): false — grid not ready (worldSizeX={wx}, worldSizeY={wy}).");
+            return false;
+        }
+
+        var n = GridManager.defaultGrid;
+        var l = GridManager.defaultGridLarge;
+        var isNormalStock = wx == (int)n.x && wy == (int)n.y;
+        var isLargeStock = wx == (int)l.x && wy == (int)l.y;
+        var custom = !isNormalStock && !isLargeStock;
+        if (log)
+            Plugin.Logger.LogInfo(
+                $"[MSC] FootprintNonDefault ({caller ?? "?"}): {custom} — grid {wx}x{wy}; stock Normal {n.x}x{n.y}, stock Large {l.x}x{l.y}.");
+        return custom;
+    }
+
     internal static Vector2 GetVanillaFootprintXY(Enums.WorldSize worldSizeType)
     {
         var v = worldSizeType == Enums.WorldSize.Large
