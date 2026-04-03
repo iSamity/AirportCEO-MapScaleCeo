@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using MapScaleCeo.MapSize;
 using UnityEngine;
 
-namespace MapScaleCeo.MapSize;
+namespace MapScaleCeo.GeneratingNewGameFix;
 
 /// <summary>
 /// Caps noise resolution like vanilla does in X: <c>mapSizeModifier * defaultGrid.x</c>. Vanilla leaves Y as <c>worldSizeY * mapSizeModifier</c>,

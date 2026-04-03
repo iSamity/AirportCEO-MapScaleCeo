@@ -1,7 +1,8 @@
 using HarmonyLib;
+using MapScaleCeo.MapSize;
 using UnityEngine;
 
-namespace MapScaleCeo.MapSize;
+namespace MapScaleCeo.GeneratingNewGameFix;
 
 /// <summary>
 /// When grid XY is not stock 700×700 or 1050×700, replicate vanilla <c>BuildOffWorldRoads</c> placement using live

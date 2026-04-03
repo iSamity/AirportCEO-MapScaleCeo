@@ -1,7 +1,7 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace MapScaleCeo.MapSize;
+namespace MapScaleCeo.UnlockableCorners;
 
 [HarmonyPatch(typeof(Utils), nameof(Utils.GetUnlockableCorner))]
 internal static class UtilsUnlockableCornerPatch

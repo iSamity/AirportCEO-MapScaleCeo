@@ -2,75 +2,18 @@ using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
 
-namespace MapScaleCeo.MapSize;
+namespace MapScaleCeo.UnlockableCorners;
 
+
+/// <summary>
+/// Applies the unlockable areas scale to the unlockable areas so the unlockable areas are scaled to the map size instead of default sizes
+/// So they scale correctly
+/// </summary>
 [HarmonyPatch(typeof(EnvironmentController), nameof(EnvironmentController.InitializeEnvironment))]
 internal class EnvironmentControllerPatch
 {
-    private static readonly string[] TerrainMatrixFields =
-    [
-        "terrainMatrixSummer",
-        "terrainMatrixSpring",
-        "terrainMatrixWinter",
-        "terrainMatrixAutumn",
-        "terrainMatrixTropic",
-        "terrainMatrixDesert"
-    ];
-
     [HarmonyPostfix]
     internal static void Postfix(EnvironmentController __instance)
-    {
-        ApplyTerrainSize(__instance);
-        ApplyUnlockableAreasScale(__instance);
-    }
-
-    /// <summary>
-    /// Applies the terrain size to the terrain matrices so the terrain is scaled to the map size instead of default sizes
-    /// </summary>
-    private static void ApplyTerrainSize(EnvironmentController instance)
-    {
-        var wx = GridManager.worldSizeX;
-        var wy = GridManager.worldSizeY;
-        if (wx <= 0 || wy <= 0)
-            return;
-
-        // So the world doesn't end exactly at the border of the map
-        var extraTerrainSize = 1000f;
-        var terrainSize = new Vector3(wx + extraTerrainSize, wy + extraTerrainSize, 1f);
-        var worldCenter = GridManager.WorldCenter;
-        const float zOffset = 0.01f;
-
-        var flags = BindingFlags.Instance | BindingFlags.NonPublic;
-        var type = typeof(EnvironmentController);
-
-        foreach (var fieldName in TerrainMatrixFields)
-        {
-            var field = type.GetField(fieldName, flags);
-            if (field != null)
-            {
-                var matrix = Matrix4x4.TRS(
-                    worldCenter.SetZ(zOffset),
-                    Quaternion.identity,
-                    terrainSize
-                );
-                field.SetValue(instance, matrix);
-            }
-        }
-
-        if (instance.environmentOverlay != null)
-        {
-            instance.environmentOverlay.transform.localScale = terrainSize;
-            instance.environmentOverlay.transform.position = worldCenter.SetZ(zOffset);
-        }
-
-        Plugin.Logger.LogInfo($"[EnvironmentControllerPatch] Terrain resized to {wx} x {wy}");
-    }
-
-    /// <summary>
-    /// Applies the unlockable areas scale to the unlockable areas so the unlockable areas are scaled to the map size instead of default sizes
-    /// So they scale correctly
-    /// </summary>
-    private static void ApplyUnlockableAreasScale(EnvironmentController instance)
     {
         var wx = (float)GridManager.worldSizeX;
         var wy = (float)GridManager.worldSizeY;
@@ -81,7 +24,7 @@ internal class EnvironmentControllerPatch
         if (airportData == null)
             return;
 
-        var unlockableAreas = instance.transform.Find("UnlockableAreas");
+        var unlockableAreas = __instance.transform.Find("UnlockableAreas");
         if (unlockableAreas == null)
             return;
 
@@ -125,4 +68,5 @@ internal class EnvironmentControllerPatch
 
         Plugin.Logger.LogInfo("[EnvironmentControllerPatch] UnlockableAreas scaled to map size");
     }
+
 }

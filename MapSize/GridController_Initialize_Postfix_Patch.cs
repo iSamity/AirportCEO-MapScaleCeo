@@ -28,7 +28,6 @@ internal static class GridController_Initialize_Postfix_Patch
             return;
 
         mapSizeEntry.Value = Vector2.zero;
-        Plugin.ConfigReference.Save();
         Plugin.Logger.LogInfo("[GridController_Initialize_Postfix_Patch] Cleared NewGameMapSize after custom new game.");
     }
 }
