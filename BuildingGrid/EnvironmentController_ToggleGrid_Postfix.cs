@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using MapScaleCeo.Config;
 using MapScaleCeo.MapSize;
 using UnityEngine;
 
@@ -14,11 +15,17 @@ internal static class EnvironmentController_ToggleGrid_Postfix
     [HarmonyPatch(nameof(EnvironmentController.ToggleGrid))]
     internal static void Postfix(EnvironmentController __instance, bool value)
     {
+        if (!DefaultConfig.ImproveBuildingGrid.Value)
+        {
+            return;
+        }
+
         if (!MapSizeHelper.FootprintIsNonDefaultVanillaSize())
         {
             return;
         }
 
+        // Disable vanilla grid again because the original function is enabling it
         EnvironmentController_InitializeEnvironment_Postfix.DisableVanillaAllGrids(__instance);
 
         var extendedGrids = EnvironmentController_InitializeEnvironment_Postfix.extendedGrids;

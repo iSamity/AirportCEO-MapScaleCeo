@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using MapScaleCeo.Config;
 using MapScaleCeo.MapSize;
 using UnityEngine;
 
@@ -15,6 +16,11 @@ internal static class EnvironmentController_ShowHide_Postfix
     [HarmonyPatch(nameof(EnvironmentController.ShowHide))]
     internal static void Postfix(EnvironmentController __instance, int floor)
     {
+        if (!DefaultConfig.ImproveBuildingGrid.Value)
+        {
+            return;
+        }
+
         if (!MapSizeHelper.FootprintIsNonDefaultVanillaSize())
         {
             return;

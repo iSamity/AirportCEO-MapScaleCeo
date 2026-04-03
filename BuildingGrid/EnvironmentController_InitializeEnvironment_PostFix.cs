@@ -1,6 +1,7 @@
 #nullable enable
 using System.Collections.Generic;
 using HarmonyLib;
+using MapScaleCeo.Config;
 using MapScaleCeo.MapSize;
 using UnityEngine;
 
@@ -42,6 +43,11 @@ internal static class EnvironmentController_InitializeEnvironment_Postfix
         originalGrids.Clear();
 
         if (!MapSizeHelper.FootprintIsNonDefaultVanillaSize())
+        {
+            return;
+        }
+
+        if (!DefaultConfig.ImproveBuildingGrid.Value)
         {
             return;
         }
