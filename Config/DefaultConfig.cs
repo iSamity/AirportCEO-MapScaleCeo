@@ -36,6 +36,12 @@ static class DefaultConfig
             true,
             "Scale terrain draw matrices and the environment overlay to match the airport footprint so ground/land matches custom map sizes.");
 
+        ShowWelcomeMessage = ConfigReference.Bind(
+            "General",
+            "Show welcome message",
+            true,
+            "Show a one-time welcome dialog when the main menu is ready. Set to true again in this file to see it on a later launch.");
+
         ClampNewGameMapSizeIfNegative();
         NewGameMapSize.SettingChanged += (_, __) => ClampNewGameMapSizeIfNegative();
     }
