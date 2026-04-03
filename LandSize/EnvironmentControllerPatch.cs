@@ -1,4 +1,3 @@
-using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
 
@@ -11,16 +10,6 @@ namespace MapScaleCeo.LandSize;
 [HarmonyPatch(typeof(EnvironmentController), nameof(EnvironmentController.InitializeEnvironment))]
 internal class EnvironmentControllerPatch
 {
-    private static readonly string[] TerrainMatrixFields =
-    [
-        "terrainMatrixSummer",
-        "terrainMatrixSpring",
-        "terrainMatrixWinter",
-        "terrainMatrixAutumn",
-        "terrainMatrixTropic",
-        "terrainMatrixDesert"
-    ];
-
     [HarmonyPostfix]
     internal static void Postfix(EnvironmentController __instance)
     {
@@ -35,22 +24,14 @@ internal class EnvironmentControllerPatch
         var worldCenter = GridManager.WorldCenter;
         const float zOffset = 0.01f;
 
-        var flags = BindingFlags.Instance | BindingFlags.NonPublic;
-        var type = typeof(EnvironmentController);
-
-        foreach (var fieldName in TerrainMatrixFields)
-        {
-            var field = type.GetField(fieldName, flags);
-            if (field != null)
-            {
-                var matrix = Matrix4x4.TRS(
-                    worldCenter.SetZ(zOffset),
-                    Quaternion.identity,
-                    terrainSize
-                );
-                field.SetValue(__instance, matrix);
-            }
-        }
+        // Must match every terrainMatrix* field on EnvironmentController; if the game adds more, assign them here too.
+        var matrix = Matrix4x4.TRS(worldCenter.SetZ(zOffset), Quaternion.identity, terrainSize);
+        __instance.terrainMatrixSummer = matrix;
+        __instance.terrainMatrixSpring = matrix;
+        __instance.terrainMatrixWinter = matrix;
+        __instance.terrainMatrixAutumn = matrix;
+        __instance.terrainMatrixTropic = matrix;
+        __instance.terrainMatrixDesert = matrix;
 
         if (__instance.environmentOverlay != null)
         {
