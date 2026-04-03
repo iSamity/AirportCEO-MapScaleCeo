@@ -14,6 +14,8 @@ static class DefaultConfig
     /// <summary>When true (default), terrain / ground rendering is scaled to the live map size (LandSize patch).</summary>
     internal static ConfigEntry<bool> ImproveGround { get; private set; }
 
+    /// <summary>When true, shows the startup welcome dialog once; cleared to false after it is queued (set back to true in the config file to show again).</summary>
+    internal static ConfigEntry<bool> ShowWelcomeMessage { get; private set; }
 
     public static void Setup()
     {
@@ -21,7 +23,8 @@ static class DefaultConfig
             "General",
             "Map Size (New Game)",
             new Vector2(),
-            "Width and height for the next NEW airport only (0,0 = vanilla size for Normal/Large). Negative values are clamped to 0. Loaded saves always use the save file; terrain follows the live grid.");
+            "Width and height for the next NEW airport only (0,0 = vanilla size for Normal/Large). Negative values are clamped to 0. " +
+            "Loaded saves always use the save file.");
 
         ImproveBuildingGrid = ConfigReference.Bind(
             "Building grid",
