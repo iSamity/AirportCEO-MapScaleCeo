@@ -6,8 +6,8 @@ namespace MapScaleCeo.GeneratingNewGameFix;
 
 /// <summary>
 /// When grid XY is not stock 700×700 or 1050×700, replicate vanilla <c>BuildOffWorldRoads</c> placement using live
-/// <see cref="GridManager.currentWorldSize"/> (not the contractor’s X — vanilla tunnel sits several units east of the
-/// contractor / delivery site).
+/// <see cref="GridManager.currentWorldSize"/>. Normal uses <c>(width/4).RoundToNearest(4)</c> like
+/// <c>SpawnStarterStructures</c> so tunnel/roads match the contractor snap on custom footprints.
 /// </summary>
 [HarmonyPatch(typeof(EnvironmentController), nameof(EnvironmentController.BuildOffWorldRoads))]
 internal static class EnvironmentController_BuildOffWorldRoads_Patch
@@ -27,14 +27,10 @@ internal static class EnvironmentController_BuildOffWorldRoads_Patch
         var roadStart = new Vector2((vector.x / 2f).RoundToNearest(4f) + 0.5f, 28.5f);
         if (data.worldSizeType == Enums.WorldSize.Normal)
         {
-            tunnelPos = new Vector2(vector.x / 4f + 3.5f, 14.5f);
-            roadStart = new Vector2(vector.x / 4f + 1.5f, 28.5f);
+            var quarterSnapped = (vector.x / 4f).RoundToNearest(4f);
+            tunnelPos = new Vector2(quarterSnapped + 2.5f, 14.5f);
+            roadStart = new Vector2(quarterSnapped + 0.5f, 28.5f);
         }
-
-        // +1 world unit east vs vanilla formula — fine-tune for custom footprints (not a full 4f grid step).
-        const float extraWorldX = 1f;
-        tunnelPos.x += extraWorldX;
-        roadStart.x += extraWorldX;
 
         var tunnel = UnityEngine.Object.Instantiate(
                 Singleton<BuildingController>.Instance.GetStructureGameObject(Enums.StructureType.WorldEntranceTunnel),
