@@ -38,11 +38,11 @@ internal static class EnvironmentController_SpawnWater_Patch
             __instance.waterDepth * (1f - __instance.waterDepthRandmizier),
             __instance.waterDepth * (1f + __instance.waterDepthRandmizier));
 
-        var num2 = (int)((float)GridManager.worldSizeX *
-                        (mapSizeModifier * (GridManager.defaultGrid.x / (float)GridManager.worldSizeX)));
-        var num3 = (int)((float)GridManager.worldSizeY *
-                        (mapSizeModifier * (GridManager.defaultGrid.y / (float)GridManager.worldSizeY)));
-        var origin = new Vector2(0f - (float)num2 / 4f, 0f - (float)num3 / 4f);
+        var num2 = (int)(GridManager.worldSizeX *
+                        (mapSizeModifier * (GridManager.defaultGrid.x / GridManager.worldSizeX)));
+        var num3 = (int)(GridManager.worldSizeY *
+                        (mapSizeModifier * (GridManager.defaultGrid.y / GridManager.worldSizeY)));
+        var origin = new Vector2(0f - num2 / 4f, 0f - num3 / 4f);
         var array = Utils.GenerateNoiseMap(num2, num3, scale);
         var length = array.GetLength(1);
         var length2 = array.GetLength(0);
@@ -54,7 +54,7 @@ internal static class EnvironmentController_SpawnWater_Patch
             {
                 if (array[j, i] > depthThreshold)
                 {
-                    var cell = new Vector2(origin.x + (float)j, origin.y + (float)i).RoundVectorToInt();
+                    var cell = new Vector2(origin.x + j, origin.y + i).RoundVectorToInt();
                     var ix = (int)cell.x;
                     var iy = (int)cell.y;
                     if (ix < 0 || iy < 0 || ix >= wx || iy >= wy)
