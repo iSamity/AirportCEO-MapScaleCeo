@@ -11,6 +11,10 @@ static class DefaultConfig
     /// <summary>When true (default), custom footprints use a procedurally tiled building grid instead of vanilla sprites.</summary>
     internal static ConfigEntry<bool> ImproveBuildingGrid { get; private set; }
 
+    /// <summary>When true (default), terrain / ground rendering is scaled to the live map size (LandSize patch).</summary>
+    internal static ConfigEntry<bool> ImproveGround { get; private set; }
+
+
     public static void Setup()
     {
         NewGameMapSize = ConfigReference.Bind(
@@ -25,6 +29,12 @@ static class DefaultConfig
             true,
             "On custom map sizes, replace the vanilla building grid with a full tiled grid. " +
             "Enabling this can cause performance issues on very large maps (many extra sprites).");
+
+        ImproveGround = ConfigReference.Bind(
+            "Land size",
+            "ImproveGround",
+            true,
+            "Scale terrain draw matrices and the environment overlay to match the airport footprint so ground/land matches custom map sizes.");
 
         ClampNewGameMapSizeIfNegative();
         NewGameMapSize.SettingChanged += (_, __) => ClampNewGameMapSizeIfNegative();

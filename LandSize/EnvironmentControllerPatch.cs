@@ -1,4 +1,5 @@
 using HarmonyLib;
+using MapScaleCeo.Config;
 using UnityEngine;
 
 namespace MapScaleCeo.LandSize;
@@ -13,6 +14,9 @@ internal class EnvironmentControllerPatch
     [HarmonyPostfix]
     internal static void Postfix(EnvironmentController __instance)
     {
+        if (!DefaultConfig.ImproveGround.Value)
+            return;
+
         var wx = GridManager.worldSizeX;
         var wy = GridManager.worldSizeY;
         if (wx <= 0 || wy <= 0)
