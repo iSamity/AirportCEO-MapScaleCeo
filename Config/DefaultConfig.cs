@@ -27,17 +27,17 @@ static class DefaultConfig
             "Loaded saves always use the save file.");
 
         ImproveBuildingGrid = ConfigReference.Bind(
-            "Building grid",
-            "ImproveBuildingGrid",
+            "General",
+            "Expanded building grid",
             true,
             "On custom map sizes, replace the vanilla building grid with a full tiled grid. " +
             "Enabling this can cause performance issues on very large maps (many extra sprites).");
 
         ImproveGround = ConfigReference.Bind(
-            "Land size",
-            "ImproveGround",
+            "General",
+            "Expanded land size",
             true,
-            "Scale terrain draw matrices and the environment overlay to match the airport footprint so ground/land matches custom map sizes.");
+            "Scale terrain (grass) and the environment overlay to match the map size footprint. After toggling this setting, you need to restart the game to see the changes.");
 
         ShowWelcomeMessage = ConfigReference.Bind(
             "General",
